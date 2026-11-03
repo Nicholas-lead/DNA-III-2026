@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bendahara DNA 3 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 9999px; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col justify-between max-w-md mx-auto border-x border-gray-800 shadow-2xl relative pb-20">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-30 bg-gray-900/90 backdrop-blur-md border-b border-gray-800 p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center font-bold text-white shadow-lg shadow-brand-500/30">
+                DNA
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight text-white">Bendahara DNA 3</h1>
+                <p class="text-xs text-gray-400">Kas & Reimburse Panitia 2026</p>
+            </div>
+        </div>
+        <div>
+            <button id="authBtn" onclick="toggleAuthModal()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-brand-500 border border-brand-500/30 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-user-lock"></i> <span id="authBtnText">Login Admin</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Containers -->
+    <main class="p-4 flex-1">
+
+        <!-- Banner Admin Active -->
+        <div id="adminBanner" class="hidden mb-4 p-3 bg-brand-900/40 border border-brand-500/40 rounded-xl flex justify-between items-center text-xs">
+            <div class="flex items-center space-x-2 text-brand-300">
+                <i class="fa-solid fa-shield-halved text-brand-400 text-sm"></i>
+                <span>Login: <b>Bendahara Utama (Nikolas)</b></span>
+            </div>
+            <button onclick="logoutAdmin()" class="text-red-400 hover:underline font-semibold text-xs">Logout</button>
+        </div>
+
+        <!-- TAB 1: FORM CATAT TRANSAKSI -->
+        <section id="tab-form" class="tab-content active space-y-4">
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-brand-500"></i> Catat Transaksi
+                    </h2>
+                    <span class="text-xs bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-0.5 rounded-full font-medium">Input Baru</span>
+                </div>
+
+                <form id="transactionForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <!-- Jenis Transaksi -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5">Jenis Transaksi</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="jenis" value="masuk" class="peer hidden" onchange="toggleReimburseOption()">
+                                <div class="p-3 text-center rounded-xl border border-gray-700 bg-gray-800/60 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 font-semibold text-sm transition">
+                                    <i class="fa-solid fa-arrow-down-left mr-1"></i> Pemasukan
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="jenis" value="keluar" class="peer hidden" checked onchange="toggleReimburseOption()">
+                                <div class="p-3 text-center rounded-xl border border-gray-700 bg-gray-800/60 peer-checked:border-rose-500 peer-checked:bg-rose-500/10 peer-checked:text-rose-400 font-semibold text-sm transition">
+                                    <i class="fa-solid fa-arrow-up-right mr-1"></i> Pengeluaran
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Status Reimburse (Tampil Utama untuk Pengeluaran) -->
+                    <div id="reimburseWrapper">
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5">Status Reimburse</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="reimburse" value="Belum Reimburse" class="peer hidden" checked>
+                                <div class="p-2.5 text-center rounded-xl border border-gray-700 bg-gray-800/60 peer-checked:border-amber-500 peer-checked:bg-amber-500/10 peer-checked:text-amber-400 font-semibold text-xs transition">
+                                    <i class="fa-solid fa-clock-rotate-left mr-1"></i> Belum Reimburse
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="reimburse" value="Sudah Reimburse" class="peer hidden">
+                                <div class="p-2.5 text-center rounded-xl border border-gray-700 bg-gray-800/60 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 peer-checked:text-blue-400 font-semibold text-xs transition">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Sudah Reimburse
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Tanggal Transaksi -->
+                    <div>
+                        <label for="tanggal" class="block text-xs font-semibold text-gray-400 mb-1">Tanggal Transaksi</label>
+                        <input type="date" id="tanggal" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+                    </div>
+
+                    <!-- Sie / Divisi -->
+                    <div>
+                        <label for="divisi" class="block text-xs font-semibold text-gray-400 mb-1">Sie / Divisi</label>
+                        <select id="divisi" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+                            <option value="" disabled selected>-- Pilih Sie / Divisi --</option>
+                            <option value="BPH / Inti">BPH / Inti</option>
+                            <option value="Acara">Sie Acara</option>
+                            <option value="Humas">Sie Humas</option>
+                            <option value="Konsumsi">Sie Konsumsi</option>
+                            <option value="Logistik / Perlengkapan">Sie Logistik / Perlengkapan</option>
+                            <option value="PDD / Pubdok">Sie PDD / Pubdok</option>
+                            <option value="Secretarial / Kesekretariatan">Sie Kesekretariatan</option>
+                            <option value="Dana Usaha">Sie Dana Usaha</option>
+                            <option value="Sponsorship">Sie Sponsorship</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <!-- Keperluan / Program Kerja -->
+                    <div>
+                        <label for="keperluan" class="block text-xs font-semibold text-gray-400 mb-1">Keperluan / Program Kerja</label>
+                        <textarea id="keperluan" rows="2" placeholder="Contoh: DP Venue Acara / Pembelian ATK" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition placeholder-gray-500"></textarea>
+                    </div>
+
+                    <!-- Nama Penanggung Jawab -->
+                    <div>
+                        <label for="nama" class="block text-xs font-semibold text-gray-400 mb-1">Nama Pemohon / Penanggung Jawab</label>
+                        <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition placeholder-gray-500">
+                    </div>
+
+                    <!-- Metode Pembayaran & Nominal -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="payment" class="block text-xs font-semibold text-gray-400 mb-1">Pembayaran</label>
+                            <select id="payment" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition">
+                                <option value="TF">Transfer (TF)</option>
+                                <option value="Cash">Tunai (Cash)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="nominal" class="block text-xs font-semibold text-gray-400 mb-1">Nominal (Rp)</label>
+                            <input type="number" id="nominal" placeholder="0" min="1000" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 transition placeholder-gray-500">
+                        </div>
+                    </div>
+
+                    <!-- Upload Foto Nota / Bukti -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Foto Nota / Bukti Transaksi</label>
+                        <input type="file" id="fotoNota" accept="image/*" onchange="previewUpload(event)" class="w-full text-xs text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-600 file:text-white hover:file:bg-brand-500 bg-gray-800 border border-gray-700 rounded-xl p-1 cursor-pointer">
+                        <div id="uploadPreviewWrapper" class="hidden mt-2 relative">
+                            <img id="uploadPreviewImg" src="" alt="Preview Nota" class="w-full h-32 object-cover rounded-xl border border-gray-700">
+                            <button type="button" onclick="removeUpload()" class="absolute top-2 right-2 bg-rose-600 text-white rounded-full p-1 text-xs shadow-md">
+                                <i class="fa-solid fa-xmark w-4 h-4 flex items-center justify-center"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-gray-400 flex items-center gap-1.5 pt-1">
+                        <i class="fa-solid fa-circle-info text-brand-400"></i> Pengajuan akan ditinjau & disetujui oleh Bendahara Utama.
+                    </p>
+
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 font-bold rounded-xl text-white shadow-lg shadow-brand-600/30 transition active:scale-[0.98]">
+                        Kirim Catatan Transaksi
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 2: OVERVIEW & DASHBOARD KAS -->
+        <section id="tab-dashboard" class="tab-content space-y-4">
+            <!-- Ringkasan Saldo Card -->
+            <div class="bg-gradient-to-br from-gray-900 to-gray-900/90 border border-gray-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl"></div>
+                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kas disetujui (DNA 3)</h3>
+                <p id="totalSaldo" class="text-3xl font-extrabold text-white mb-3">Rp 0</p>
+
+                <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-gray-800">
+                    <div class="bg-emerald-950/40 border border-emerald-900/40 p-2.5 rounded-xl">
+                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle-down"></i> Total Masuk</span>
+                        <p id="totalMasuk" class="font-bold text-emerald-300 text-sm mt-0.5">Rp 0</p>
+                    </div>
+                    <div class="bg-rose-950/40 border border-rose-900/40 p-2.5 rounded-xl">
+                        <span class="text-[11px] text-rose-400 flex items-center gap-1"><i class="fa-solid fa-circle-up"></i> Total Keluar</span>
+                        <p id="totalKeluar" class="font-bold text-rose-300 text-sm mt-0.5">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="mt-2.5 pt-2 flex justify-between text-[11px] text-gray-400 border-t border-gray-800/60">
+                    <span>Belum Reimburse: <strong id="totalUnreimbursed" class="text-amber-400">Rp 0</strong></span>
+                    <span>Menunggu Persetujuan: <strong id="totalPendingBadge" class="text-indigo-400">0</strong></span>
+                </div>
+            </div>
+
+            <!-- Operational Menu for Admin -->
+            <div id="adminQuickActions" class="hidden grid grid-cols-2 gap-2">
+                <button onclick="exportCSV()" class="p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs font-semibold text-gray-300 hover:text-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-csv text-emerald-400"></i> Export CSV
+                </button>
+                <button onclick="confirmClearData()" class="p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Reset Data
+                </button>
+            </div>
+
+            <!-- Section Approval Khusus Bendahara Utama (Admin Mode) -->
+            <div id="adminApprovalSection" class="hidden bg-gray-900 border border-amber-500/30 rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                    <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Menunggu Persetujuan
+                    </h3>
+                    <span id="pendingBadge" class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full font-bold">0 Pending</span>
+                </div>
+                <div id="pendingList" class="space-y-2.5">
+                    <!-- Dynamic Items Pending -->
+                </div>
+            </div>
+
+            <!-- Filter & Searching -->
+            <div class="space-y-2">
+                <div class="flex gap-2">
+                    <select id="filterDivisi" onchange="renderTransactions()" class="w-1/2 bg-gray-900 border border-gray-800 text-xs rounded-xl px-3 py-2 text-gray-300 focus:outline-none">
+                        <option value="ALL">Semua Divisi</option>
+                        <option value="BPH / Inti">BPH / Inti</option>
+                        <option value="Acara">Sie Acara</option>
+                        <option value="Humas">Sie Humas</option>
+                        <option value="Konsumsi">Sie Konsumsi</option>
+                        <option value="Logistik / Perlengkapan">Sie Logistik</option>
+                        <option value="PDD / Pubdok">Sie PDD</option>
+                        <option value="Secretarial / Kesekretariatan">Sie Secretarial</option>
+                        <option value="Dana Usaha">Sie Danus</option>
+                        <option value="Sponsorship">Sie Sponsorship</option>
+                    </select>
+
+                    <select id="filterStatus" onchange="renderTransactions()" class="w-1/2 bg-gray-900 border border-gray-800 text-xs rounded-xl px-3 py-2 text-gray-300 focus:outline-none">
+                        <option value="ALL">Semua Status</option>
+                        <option value="Approved">Disetujui</option>
+                        <option value="Pending">Menunggu</option>
+                        <option value="Rejected">Ditolak</option>
+                    </select>
+                </div>
+                
+                <select id="filterReimburse" onchange="renderTransactions()" class="w-full bg-gray-900 border border-gray-800 text-xs rounded-xl px-3 py-2 text-gray-300 focus:outline-none">
+                    <option value="ALL">Semua Status Reimburse</option>
+                    <option value="Belum Reimburse">Belum Reimburse</option>
+                    <option value="Sudah Reimburse">Sudah Reimburse</option>
+                </select>
+            </div>
+
+            <!-- Daftar Transaksi/Riwayat -->
+            <div class="space-y-3">
+                <h3 class="font-bold text-sm text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-brand-400"></i> Riwayat & Transaksi Publik
+                </h3>
+                <div id="transactionList" class="space-y-2.5">
+                    <!-- Dynamic Transaction Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: INFORMASI PANITIA -->
+        <section id="tab-info" class="tab-content space-y-4">
+            <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-brand-500"></i> SOP Kas & Reimburse DNA 3
+                </h2>
+                
+                <div class="space-y-3 text-xs text-gray-300 leading-relaxed">
+                    <div class="p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
+                        <p class="font-semibold text-white mb-1"><i class="fa-solid fa-paper-plane text-indigo-400 mr-1"></i> Alur Pengajuan Reimburse:</p>
+                        <ol class="list-decimal list-inside space-y-1 text-gray-400">
+                            <li>Isi form pencatatan & **wajib lampirkan foto nota/bukti**.</li>
+                            <li>Pilih opsi status reimburse (**Belum Reimburse** / **Sudah Reimburse**).</li>
+                            <li>Tunggu verifikasi persetujuan dari **Bendahara Utama (Nikolas)**.</li>
+                            <li>Setelah dicairkan/disetujui, Bendahara akan memperbarui status reimburse.</li>
+                        </ol>
+                    </div>
+
+                    <div class="p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
+                        <p class="font-semibold text-white mb-1"><i class="fa-solid fa-shield-cat text-amber-400 mr-1"></i> Hak Akses Bendahara Utama:</p>
+                        <p class="text-gray-400">Login menggunakan ID: <b>Nikolas</b> & Pass: <b>1209348756</b> untuk persetujuan transaksi & kontrol reimburse panitia.</p>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-gray-800 text-center">
+                    <p class="text-xs text-gray-500">Bendahara DNA 3 2026 &bull; Build with Mobile First UX</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-gray-900/95 backdrop-blur-md border-t border-gray-800 z-40 px-6 py-2">
+        <div class="flex justify-around items-center">
+            <button onclick="switchTab('tab-form')" id="nav-tab-form" class="nav-item flex flex-col items-center gap-1 text-brand-500">
+                <i class="fa-solid fa-square-plus text-lg"></i>
+                <span class="text-[10px] font-medium">Input</span>
+            </button>
+            <button onclick="switchTab('tab-dashboard')" id="nav-tab-dashboard" class="nav-item flex flex-col items-center gap-1 text-gray-500 hover:text-gray-300">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-[10px] font-medium">Dashboard</span>
+            </button>
+            <button onclick="switchTab('tab-info')" id="nav-tab-info" class="nav-item flex flex-col items-center gap-1 text-gray-500 hover:text-gray-300">
+                <i class="fa-solid fa-circle-question text-lg"></i>
+                <span class="text-[10px] font-medium">Informasi</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Modal Login Admin -->
+    <div id="authModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-800 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative">
+            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-brand-600/20 text-brand-400 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-base font-bold text-white">Login Bendahara Utama</h3>
+                <p class="text-xs text-gray-400">Masukan ID dan Password Panitia</p>
+            </div>
+
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">ID Admin</label>
+                    <input type="text" id="adminId" placeholder="Nikolas" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Password</label>
+                    <input type="password" id="adminPass" placeholder="••••••••" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 font-bold rounded-xl text-white text-sm transition mt-2">
+                    Masuk Mode Admin
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Image Zoom / Preview Nota -->
+    <div id="imageModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="relative max-w-sm w-full" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="imageModalSrc" src="" alt="Bukti Nota Zoom" class="w-full max-h-[75vh] object-contain rounded-2xl border border-gray-700 shadow-2xl">
+            <p id="imageModalCaption" class="text-center text-xs text-gray-300 mt-3 font-medium"></p>
+        </div>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden max-w-xs w-full bg-gray-800 border border-brand-500/50 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMsg" class="flex-1">Pesan notifikasi...</span>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        const STORAGE_KEY = 'DNA3_BENDAHARA_TRANSACTIONS_2026';
+        const AUTH_KEY = 'DNA3_BENDAHARA_AUTH_2026';
+
+        let transactions = [];
+        let isAdminLoggedIn = false;
+        let uploadedBase64 = null;
+
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal').value = today;
+
+            checkAuthStatus();
+            loadTransactions();
+            renderTransactions();
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('text-brand-500');
+                el.classList.add('text-gray-500');
+            });
+            document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
+            document.getElementById('nav-' + tabId).classList.add('text-brand-500');
+
+            if (tabId === 'tab-dashboard') {
+                renderTransactions();
+            }
+        }
+
+        function toggleReimburseOption() {
+            const jenis = document.querySelector('input[name="jenis"]:checked').value;
+            const reimburseWrapper = document.getElementById('reimburseWrapper');
+            if (jenis === 'masuk') {
+                reimburseWrapper.classList.add('hidden');
+            } else {
+                reimburseWrapper.classList.remove('hidden');
+            }
+        }
+
+        // Preview & Convert Image Upload to Base64
+        function previewUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Compress / convert image to base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedBase64 = e.target.result;
+                document.getElementById('uploadPreviewImg').src = uploadedBase64;
+                document.getElementById('uploadPreviewWrapper').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeUpload() {
+            uploadedBase64 = null;
+            document.getElementById('fotoNota').value = '';
+            document.getElementById('uploadPreviewImg').src = '';
+            document.getElementById('uploadPreviewWrapper').classList.add('hidden');
+        }
+
+        function loadTransactions() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    transactions = JSON.parse(data);
+                } catch(e) {
+                    transactions = [];
+                }
+            } else {
+                // Seed initial mock data
+                transactions = [
+                    {
+                        id: 1,
+                        jenis: 'masuk',
+                        tanggal: '2026-03-01',
+                        divisi: 'BPH / Inti',
+                        keperluan: 'Dana Awal Konsinyasi DNA 3',
+                        nama: 'Nikolas',
+                        payment: 'TF',
+                        nominal: 2500000,
+                        status: 'Approved',
+                        reimburseStatus: 'Sudah Reimburse',
+                        fotoNota: null,
+                        timestamp: Date.now() - 1000000
+                    },
+                    {
+                        id: 2,
+                        jenis: 'keluar',
+                        tanggal: '2026-03-02',
+                        divisi: 'PDD / Pubdok',
+                        keperluan: 'Cetak Banner & ID Card',
+                        nama: 'Rian PDD',
+                        payment: 'TF',
+                        nominal: 350000,
+                        status: 'Pending',
+                        reimburseStatus: 'Belum Reimburse',
+                        fotoNota: null,
+                        timestamp: Date.now() - 500000
+                    }
+                ];
+                saveTransactions();
+            }
+        }
+
+        function saveTransactions() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const jenis = document.querySelector('input[name="jenis"]:checked').value;
+            const reimburseStatus = jenis === 'masuk' ? '-' : document.querySelector('input[name="reimburse"]:checked').value;
+            const tanggal = document.getElementById('tanggal').value;
+            const divisi = document.getElementById('divisi').value;
+            const keperluan = document.getElementById('keperluan').value;
+            const nama = document.getElementById('nama').value;
+            const payment = document.getElementById('payment').value;
+            const nominal = parseFloat(document.getElementById('nominal').value);
+
+            const newTransaction = {
+                id: Date.now(),
+                jenis,
+                tanggal,
+                divisi,
+                keperluan,
+                nama,
+                payment,
+                nominal,
+                reimburseStatus,
+                fotoNota: uploadedBase64,
+                status: isAdminLoggedIn ? 'Approved' : 'Pending',
+                timestamp: Date.now()
+            };
+
+            transactions.unshift(newTransaction);
+            saveTransactions();
+
+            // Reset Form
+            document.getElementById('transactionForm').reset();
+            removeUpload();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggal').value = today;
+
+            showToast(isAdminLoggedIn ? "Transaksi dicatat & langsung disetujui." : "Pengajuan diajukan! Menunggu persetujuan Bendahara Utama.");
+            switchTab('tab-dashboard');
+        }
+
+        function renderTransactions() {
+            const filterDiv = document.getElementById('filterDivisi').value;
+            const filterStat = document.getElementById('filterStatus').value;
+            const filterReimb = document.getElementById('filterReimburse').value;
+
+            const listContainer = document.getElementById('transactionList');
+            const pendingContainer = document.getElementById('pendingList');
+            
+            listContainer.innerHTML = '';
+            pendingContainer.innerHTML = '';
+
+            let totalMasuk = 0;
+            let totalKeluar = 0;
+            let totalUnreimbursed = 0;
+            let pendingCount = 0;
+
+            const sorted = [...transactions].sort((a,b) => b.timestamp - a.timestamp);
+
+            sorted.forEach(item => {
+                if (item.status === 'Approved') {
+                    if (item.jenis === 'masuk') totalMasuk += item.nominal;
+                    if (item.jenis === 'keluar') totalKeluar += item.nominal;
+                }
+
+                if (item.jenis === 'keluar' && item.reimburseStatus === 'Belum Reimburse') {
+                    totalUnreimbursed += item.nominal;
+                }
+
+                if (item.status === 'Pending') {
+                    pendingCount++;
+                }
+
+                const passDivisi = filterDiv === 'ALL' || item.divisi === filterDiv;
+                const passStatus = filterStat === 'ALL' || item.status === filterStat;
+                const passReimburse = filterReimb === 'ALL' || item.reimburseStatus === filterReimb;
+
+                if (passDivisi && passStatus && passReimburse) {
+                    listContainer.appendChild(createTransactionCard(item));
+                }
+
+                if (item.status === 'Pending' && isAdminLoggedIn) {
+                    pendingContainer.appendChild(createPendingCard(item));
+                }
+            });
+
+            const saldo = totalMasuk - totalKeluar;
+            document.getElementById('totalSaldo').innerText = formatRupiah(saldo);
+            document.getElementById('totalMasuk').innerText = formatRupiah(totalMasuk);
+            document.getElementById('totalKeluar').innerText = formatRupiah(totalKeluar);
+            document.getElementById('totalUnreimbursed').innerText = formatRupiah(totalUnreimbursed);
+            document.getElementById('totalPendingBadge').innerText = pendingCount;
+            document.getElementById('pendingBadge').innerText = `${pendingCount} Pending`;
+
+            if (listContainer.children.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">Belum ada catatan transaksi sesuai filter.</div>`;
+            }
+
+            if (pendingContainer.children.length === 0 && isAdminLoggedIn) {
+                pendingContainer.innerHTML = `<div class="text-center py-3 text-gray-500 text-xs">Tidak ada pengajuan pending.</div>`;
+            }
+        }
+
+        // Component Card Transaksi Utama
+        function createTransactionCard(item) {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-900 border border-gray-800 rounded-xl p-3.5 space-y-2 shadow-sm';
+
+            const isMasuk = item.jenis === 'masuk';
+            const badgeColor = item.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' :
+                              (item.status === 'Pending' ? 'bg-amber-950 text-amber-400 border-amber-800' : 'bg-rose-950 text-rose-400 border-rose-800');
+
+            const reimburseBadge = item.jenis === 'keluar' ? 
+                (item.reimburseStatus === 'Sudah Reimburse' ? 
+                    `<span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 font-semibold"><i class="fa-solid fa-circle-check"></i> Sudah Reimburse</span>` :
+                    `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-semibold"><i class="fa-solid fa-clock"></i> Belum Reimburse</span>`) 
+                : '';
+
+            const notaBtn = item.fotoNota ? 
+                `<button onclick="openImageModal('${item.fotoNota}', '${escapeHtml(item.keperluan)}')" class="text-xs text-brand-400 hover:underline flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-receipt"></i> Lihat Bukti Nota
+                 </button>` : `<span class="text-[10px] text-gray-500 italic block mt-1">Tanpa Nota</span>`;
+
+            const adminReimburseToggle = (isAdminLoggedIn && item.jenis === 'keluar') ?
+                `<button onclick="toggleReimburseStatus(${item.id})" class="text-[10px] bg-gray-800 hover:bg-gray-700 px-2 py-0.5 rounded border border-gray-700 text-gray-300">
+                    Ubah Status Reimburse
+                 </button>` : '';
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="space-y-0.5">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeColor}">
+                                ${item.status === 'Pending' ? 'Menunggu Persetujuan' : item.status}
+                            </span>
+                            ${reimburseBadge}
+                        </div>
+                        <h4 class="font-semibold text-white text-sm pt-1">${escapeHtml(item.keperluan)}</h4>
+                        <p class="text-[11px] text-gray-400">${escapeHtml(item.divisi)} &bull; ${escapeHtml(item.nama)}</p>
+                        ${notaBtn}
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-sm ${isMasuk ? 'text-emerald-400' : 'text-rose-400'}">
+                            ${isMasuk ? '+' : '-'} ${formatRupiah(item.nominal)}
+                        </p>
+                        <span class="text-[10px] text-gray-500 block mb-1">${item.payment} &bull; ${formatDate(item.tanggal)}</span>
+                        ${adminReimburseToggle}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Component Pending Approval Card
+        function createPendingCard(item) {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-800/80 border border-gray-700/60 rounded-xl p-3 space-y-2 text-xs';
+            
+            const isMasuk = item.jenis === 'masuk';
+            const notaBtn = item.fotoNota ? 
+                `<button onclick="openImageModal('${item.fotoNota}', '${escapeHtml(item.keperluan)}')" class="text-brand-400 underline text-[11px] font-semibold">
+                    <i class="fa-solid fa-image"></i> Cek Nota
+                 </button>` : `<span class="text-gray-500 text-[10px]">Tanpa Foto Nota</span>`;
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="font-bold text-gray-200">${escapeHtml(item.keperluan)}</span>
+                        <p class="text-[11px] text-gray-400">Oleh: <b>${escapeHtml(item.nama)}</b> (${escapeHtml(item.divisi)})</p>
+                        <span class="text-[10px] text-amber-400 font-medium">${item.jenis === 'keluar' ? item.reimburseStatus : 'Pemasukan'}</span>
+                    </div>
+                    <span class="font-bold ${isMasuk ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${isMasuk ? '+' : '-'} ${formatRupiah(item.nominal)}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center pt-1 border-t border-gray-700/50">
+                    <div>${notaBtn}</div>
+                    <div class="flex gap-1.5">
+                        <button onclick="approveTransaction(${item.id})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 font-bold text-white rounded-lg text-[11px]">
+                            Setujui
+                        </button>
+                        <button onclick="rejectTransaction(${item.id})" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 font-bold text-white rounded-lg text-[11px]">
+                            Tolak
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Approve & Reject Actions
+        function approveTransaction(id) {
+            const index = transactions.findIndex(t => t.id === id);
+            if (index !== -1) {
+                transactions[index].status = 'Approved';
+                saveTransactions();
+                renderTransactions();
+                showToast("Transaksi disetujui!");
+            }
+        }
+
+        function rejectTransaction(id) {
+            const index = transactions.findIndex(t => t.id === id);
+            if (index !== -1) {
+                transactions[index].status = 'Rejected';
+                saveTransactions();
+                renderTransactions();
+                showToast("Transaksi ditolak.", "warning");
+            }
+        }
+
+        function toggleReimburseStatus(id) {
+            const index = transactions.findIndex(t => t.id === id);
+            if (index !== -1) {
+                const current = transactions[index].reimburseStatus;
+                transactions[index].reimburseStatus = current === 'Sudah Reimburse' ? 'Belum Reimburse' : 'Sudah Reimburse';
+                saveTransactions();
+                renderTransactions();
+                showToast(`Status Reimburse diubah menjadi: ${transactions[index].reimburseStatus}`);
+            }
+        }
+
+        // Modal Image Viewer
+        function openImageModal(src, caption) {
+            document.getElementById('imageModalSrc').src = src;
+            document.getElementById('imageModalCaption').innerText = caption;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        // Auth Logic
+        function toggleAuthModal() {
+            document.getElementById('authModal').classList.toggle('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('adminId').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            if (id === 'Nikolas' && pass === '1209348756') {
+                isAdminLoggedIn = true;
+                localStorage.setItem(AUTH_KEY, 'true');
+                updateAdminUI();
+                toggleAuthModal();
+                showToast("Berhasil login sebagai Bendahara Utama!");
+            } else {
+                showToast("ID atau Password Admin Salah!", "warning");
+            }
+        }
+
+        function checkAuthStatus() {
+            if (localStorage.getItem(AUTH_KEY) === 'true') {
+                isAdminLoggedIn = true;
+                updateAdminUI();
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem(AUTH_KEY);
+            updateAdminUI();
+            showToast("Berhasil Logout dari Admin Mode");
+        }
+
+        function updateAdminUI() {
+            const btnText = document.getElementById('authBtnText');
+            const adminBanner = document.getElementById('adminBanner');
+            const approvalSection = document.getElementById('adminApprovalSection');
+            const quickActions = document.getElementById('adminQuickActions');
+
+            if (isAdminLoggedIn) {
+                btnText.innerText = 'Admin Active';
+                adminBanner.classList.remove('hidden');
+                approvalSection.classList.remove('hidden');
+                quickActions.classList.remove('hidden');
+            } else {
+                btnText.innerText = 'Login Admin';
+                adminBanner.classList.add('hidden');
+                approvalSection.classList.add('hidden');
+                quickActions.classList.add('hidden');
+            }
+            renderTransactions();
+        }
+
+        // Export Data Ke CSV
+        function exportCSV() {
+            if (transactions.length === 0) {
+                showToast("Belum ada data transaksi.", "warning");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,ID,Tanggal,Jenis,Divisi,Keperluan,Nama,Payment,Nominal,Reimburse,Status\n";
+
+            transactions.forEach(t => {
+                const row = [
+                    t.id,
+                    t.tanggal,
+                    t.jenis,
+                    `"${t.divisi}"`,
+                    `"${t.keperluan.replace(/"/g, '""')}"`,
+                    `"${t.nama}"`,
+                    t.payment,
+                    t.nominal,
+                    t.reimburseStatus || '-',
+                    t.status
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Laporan_Kas_DNA3_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function confirmClearData() {
+            if (confirm("Apakah Anda yakin ingin menghapus SELURUH data kas DNA 3?")) {
+                transactions = [];
+                saveTransactions();
+                renderTransactions();
+                showToast("Semua data transaksi telah dibersihkan.");
+            }
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        function formatDate(dateStr) {
+            if(!dateStr) return '-';
+            const parts = dateStr.split('-');
+            if(parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dateStr;
+        }
+
+        function escapeHtml(text) {
+            return String(text).replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            toastIcon.className = type === "warning" ? 
+                "fa-solid fa-triangle-exclamation text-amber-400 text-base" : 
+                "fa-solid fa-circle-check text-emerald-400 text-base";
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
